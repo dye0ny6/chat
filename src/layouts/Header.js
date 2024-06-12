@@ -7,7 +7,7 @@ import DropDownComponent from "../components/common/DropDownComponent";
 
 const navigation = [{ name: "Chat", href: "/chat" }];
 
-const menuItems = [
+const menuItemsProfile = [
   { name: "로그인", to: "/login" },
   { name: "회원가입", to: "/signup" },
   {
@@ -19,6 +19,17 @@ const menuItems = [
   { name: "프로필", to: "/profile" },
   { name: "설정", to: "/setting" },
   { name: "로그아웃", to: "/logout" },
+];
+
+const menuItemsNotification = [
+  { name: "", to: null },
+  {
+    name: (
+      <div className="absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"></div>
+    ),
+    to: null,
+  },
+  { name: "", to: null },
 ];
 
 function classNames(...classes) {
@@ -63,26 +74,37 @@ export default function Example() {
           </div>
           <nav className="hidden md:flex md:gap-x-11 md:text-sm md:font-semibold md:leading-6 md:text-gray-700">
             {navigation.map((item, itemIdx) => (
-              <a key={itemIdx} href={item.href}>
+              <Link key={itemIdx} href={item.href}>
                 {item.name}
-              </a>
+              </Link>
             ))}
           </nav>
           <div className="flex flex-1 items-center justify-end gap-x-8">
-            <button
-              type="button"
-              className="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500"
-            >
-              <span className="sr-only">View notifications</span>
-              <BellIcon className="h-6 w-6" aria-hidden="true" />
-            </button>
+            <div className="h-6 w-6">
+              <button type="button" className="-m-2.5 p-2.5">
+                <span className="sr-only">View notifications</span>
+                <DropDownComponent
+                  onClick={handleClickMy}
+                  menuItems={menuItemsNotification}
+                  menuButtonImage="https://img.icons8.com/?size=100&id=eMfeVHKyTnkc&format=png&color=000000"
+                />
+                {isOpen && (
+                  <div ref={dropdownRef} onClick={handleCloseMy}></div>
+                )}
+              </button>
+            </div>
             <div className="-m-1.5 p-1.5">
               <span className="sr-only">Your profile</span>
-              <DropDownComponent
-                onClick={handleClickMy}
-                menuItems={menuItems}
-              />
-              {isOpen && <div ref={dropdownRef} onClick={handleCloseMy}></div>}
+              <div className=" h-8 w-8">
+                <DropDownComponent
+                  onClick={handleClickMy}
+                  menuItems={menuItemsProfile}
+                  menuButtonImage="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                />
+                {isOpen && (
+                  <div ref={dropdownRef} onClick={handleCloseMy}></div>
+                )}
+              </div>
             </div>
           </div>
         </div>

@@ -12,22 +12,48 @@ import { Link } from "react-router-dom";
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
+function MyMenuItem({ name, to, onClick, isFocused, onFocus }) {
+  const menuItemClasses = isFocused
+    ? "bg-gray-100 text-gray-900 block px-4 py-2 text-sm"
+    : "text-gray-700 block px-4 py-2 text-sm";
 
-export default function DropDownComponent({ menuItems }) {
+  return (
+    <MenuItem onFocus={onFocus} className={menuItemClasses}>
+      {to ? (
+        <Link to={to} className={menuItemClasses}>
+          {name}
+        </Link>
+      ) : onClick ? (
+        <button type="button" onClick={onClick} className={menuItemClasses}>
+          {name}
+        </button>
+      ) : (
+        <div className={menuItemClasses}>{name}</div>
+      )}
+    </MenuItem>
+  );
+}
+
+export default function DropDownComponent({ menuItems, menuButtonImage }) {
   const [focusedIndex, setFocusedIndex] = useState(null);
-
+  
   const handleMenuItemFocus = (index) => {
     setFocusedIndex(index);
   };
-
+  
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
         <MenuButton>
-          <img
-            className="h-8 w-8 rounded-full bg-gray-800"
-            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-          />
+          {menuButtonImage ? (
+            <img
+              className="rounded-full"
+              src={menuButtonImage}
+              alt="메뉴 버튼"
+            />
+          ) : (
+            <ChevronDownIcon className="h-5 w-5 text-gray-400" />
+          )}
         </MenuButton>
       </div>
       <Transition
@@ -54,27 +80,5 @@ export default function DropDownComponent({ menuItems }) {
         </MenuItems>
       </Transition>
     </Menu>
-  );
-}
-
-function MyMenuItem({ name, to, onClick, isFocused, onFocus }) {
-  const menuItemClasses = isFocused
-    ? "bg-gray-100 text-gray-900 block px-4 py-2 text-sm"
-    : "text-gray-700 block px-4 py-2 text-sm";
-
-  return (
-    <MenuItem onFocus={onFocus} className={menuItemClasses}>
-      {to ? (
-        <Link to={to} className={menuItemClasses}>
-          {name}
-        </Link>
-      ) : onClick ? (
-        <button type="button" onClick={onClick} className={menuItemClasses}>
-          {name}
-        </button>
-      ) : (
-        <div className={menuItemClasses}>{name}</div>
-      )}
-    </MenuItem>
   );
 }
