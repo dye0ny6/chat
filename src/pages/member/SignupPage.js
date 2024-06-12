@@ -1,5 +1,5 @@
 import BasicLayout from "../../layouts/BasicLayout";
-import React, { useRef, useState, useMemo } from "react";
+import React, { useRef, useState, useMemo, useCallback } from "react";
 import { memberSubmit, checkEmail } from "../../api/MemberApi";
 import Select from "react-select";
 import countryList from "react-select-country-list";
@@ -13,7 +13,7 @@ function classNames(...classes) {
 const initState = {
   email: "",
   password: "",
-  // passwordCheck: "",
+  passwordConfirm: "",
   phone: "",
   // authNumber: "",
   nickname: "",
@@ -31,6 +31,74 @@ const SignupPage = () => {
   const [value, setValue] = useState(""); // 국적 셀렉터
   const options = useMemo(() => countryList().getData(), []);
   const [checkedValues, setCheckedValues] = useState([]); // 사용 언어 체크박스
+
+  // 실시간 비밀번호 유효성체크
+  const [password, setPassword] = useState("");
+  const [passwordMessage, setPasswordMessage] = useState("");
+  const [isPassword, setIsPassword] = useState(false);
+  // 실시간 비밀번호 확인
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [passwordConfirmMessage, setPasswordConfirmMessage] = useState("");
+  const [isPasswordConfirm, setIsPasswordConfirm] = useState(false);
+
+  // 이메일 중복 검사
+  const handleClickEmail = async (e) => {
+    e.preventDefault();
+    console.log("***** SignupPage - handleClickEmail");
+
+    const formData = new FormData();
+
+    formData.append("email", member.email);
+
+    try {
+      const response = await checkEmail(member.email);
+      if (response.duplicated) {
+        alert("이미 사용 중인 이메일입니다.");
+      } else {
+        alert("사용 가능한 이메일입니다.");
+        // 이후 로직
+      }
+    } catch (error) {
+      console.error("***** SignupPage handleClickEmail - error : ", error);
+    }
+  };
+
+  // 비밀번호
+  const onChangePassword = useCallback((e) => {
+    member[e.target.name] = e.target.value;
+    setMember({ ...member });
+
+    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[0-9]).{8,25}$/;
+    const passwordCurrent = e.target.value;
+    setPassword(passwordCurrent);
+
+    if (!passwordRegex.test(passwordCurrent)) {
+      setPasswordMessage("영문자, 숫자를 포함해 8글자 이상 입력해주세요.");
+      setIsPassword(false);
+    } else {
+      setPasswordMessage("사용 가능한 비밀번호입니다.");
+      setIsPassword(true);
+    }
+  }, []);
+  // 비밀번호 확인
+  const onChangePasswordConfirm = useCallback(
+    (e) => {
+      member[e.target.name] = e.target.value;
+      setMember({ ...member });
+
+      const passwordConfirmCurrent = e.target.value;
+      setPasswordConfirm(passwordConfirmCurrent);
+
+      if (password === passwordConfirmCurrent) {
+        setPasswordConfirmMessage("비밀번호가 일치합니다.");
+        setIsPasswordConfirm(true);
+      } else {
+        setPasswordConfirmMessage("비밀번호가 일치하지 않습니다.");
+        setIsPasswordConfirm(false);
+      }
+    },
+    [password]
+  );
 
   const handleChangeMember = (e) => {
     member[e.target.name] = e.target.value;
@@ -79,28 +147,6 @@ const SignupPage = () => {
     } catch (error) {
       console.log("***** SignupPage handleClickSubmit - error : ", error);
       console.error(error);
-    }
-  };
-
-  // 이메일 중복 검사
-  const handleClickEmail = async (e) => {
-    e.preventDefault();
-    console.log("***** SignupPage - handleClickEmail");
-
-    const formData = new FormData();
-
-    formData.append("email", member.email);
-
-    try {
-      const response = await checkEmail(member.email);
-      if (response.duplicated) {
-        alert("이미 사용 중인 이메일입니다.");
-      } else {
-        alert("사용 가능한 이메일입니다.");
-        // 이후 로직
-      }
-    } catch (error) {
-      console.error("***** SignupPage handleClickEmail - error : ", error);
     }
   };
 
@@ -167,12 +213,6 @@ const SignupPage = () => {
                       >
                         비밀번호
                       </label>
-                      <p
-                        className="mt-2 text-sm font-semibold text-gray-500"
-                        id="email-description"
-                      >
-                        영문자, 숫자를 포함해 8글자 이상 입력
-                      </p>
                     </div>
                     <div className="mt-2">
                       <input
@@ -180,15 +220,26 @@ const SignupPage = () => {
                         name="password"
                         id="password"
                         value={member.password}
-                        onChange={handleChangeMember}
+                        onChange={onChangePassword}
                         className="block w-full border-gray-300 rounded-md shadow-sm py-1.5 text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                       />
+                      {password.length > 0 && (
+                        <span
+                          className={`message ${
+                            isPassword ? "success" : "error"
+                          }`}
+                        >
+                          <p className="mt-2 text-sm font-semibold text-gray-500">
+                            {passwordMessage}
+                          </p>
+                        </span>
+                      )}
                     </div>
                     {/* 비밀번호 재입력 */}
-                    {/* <div className="mt-3">
+                    <div className="mt-3">
                       <div className="flex items-center justify-between">
                         <label
-                          htmlFor="passwordCheck"
+                          htmlFor="passwordConfirm"
                           className="block text-sm font-medium leading-6 text-gray-900"
                         >
                           비밀번호 재입력
@@ -197,15 +248,26 @@ const SignupPage = () => {
                       <div className="mt-2">
                         <input
                           type="password"
-                          name="passwordCheck"
-                          id="passwordCheck"
-                          // value={member.passwordCheck}
-                          // onChange={handleChangeMember}
+                          name="passwordConfirm"
+                          id="passwordConfirm"
+                          value={member.passwordConfirm}
+                          onChange={onChangePasswordConfirm}
                           className="block w-full border-gray-300 rounded-md shadow-sm py-1.5 text-gray-900 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                          aria-describedby="password-error"
                         />
+                        {passwordConfirm.length > 0 &&
+                          member.passwordConfirm && (
+                            <span
+                              className={`message ${
+                                isPasswordConfirm ? "success" : "error"
+                              }`}
+                            >
+                              <p className="mt-2 text-sm font-semibold text-gray-500">
+                                {passwordConfirmMessage}
+                              </p>
+                            </span>
+                          )}
                       </div>
-                    </div> */}
+                    </div>
                   </div>
                   {/* 전화번호 */}
                   <div className="sm:col-span-4">
