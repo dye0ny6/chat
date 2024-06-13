@@ -1,9 +1,18 @@
 import BasicLayout from "./../../layouts/BasicLayout";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import FindIdFWModal from "../../components/common/FindIdFWModal";
+import { login } from "../../slices/loginSlice";
+
+const initState = {
+  email: "",
+  password: "",
+};
 
 const LoginPage = () => {
+  const [loginParam, setLoginParam] = useState({ ...initState });
+
   const [isFindModalOpen, setIsFindModalOpen] = useState(false);
 
   const openFindModal = () => {
@@ -12,6 +21,15 @@ const LoginPage = () => {
 
   const closeFindModal = () => {
     setIsFindModalOpen(false);
+  };
+
+  const dispatch = useDispatch();
+  const handleClickLogin = () => {
+    dispatch(login(loginParam)); // dispatch({type:LOGIN, payload})
+  };
+  const handleChange = (e) => {
+    loginParam[e.target.name] = e.target.value;
+    setLoginParam({ ...loginParam });
   };
 
   return (
@@ -69,7 +87,8 @@ const LoginPage = () => {
 
             <div>
               <button
-                type="submit"
+                type="button"
+                onClick={handleClickLogin}
                 className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 로그인

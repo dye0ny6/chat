@@ -6,7 +6,7 @@ import {
   MenuItems,
   Transition,
 } from "@headlessui/react";
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
+import { UserCircleIcon } from "@heroicons/react/20/solid";
 import { Link } from "react-router-dom";
 
 function classNames(...classes) {
@@ -36,11 +36,11 @@ function MyMenuItem({ name, to, onClick, isFocused, onFocus }) {
 
 export default function DropDownComponent({ menuItems, menuButtonImage }) {
   const [focusedIndex, setFocusedIndex] = useState(null);
-  
+
   const handleMenuItemFocus = (index) => {
     setFocusedIndex(index);
   };
-  
+
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
@@ -52,7 +52,7 @@ export default function DropDownComponent({ menuItems, menuButtonImage }) {
               alt="메뉴 버튼"
             />
           ) : (
-            <ChevronDownIcon className="h-5 w-5 text-gray-400" />
+            <UserCircleIcon className="h-8 w-8 text-gray-400" />
           )}
         </MenuButton>
       </div>
