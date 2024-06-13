@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import FindIdFWModal from "../../components/common/FindIdFWModal";
 
-const LoginPage = () => {
+const MemberIndex = () => {
   const [isFindModalOpen, setIsFindModalOpen] = useState(false);
 
   const openFindModal = () => {
@@ -103,4 +103,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default MemberIndex;

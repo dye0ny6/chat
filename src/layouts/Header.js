@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useSelector } from "react";
 import { Dialog, DialogPanel } from "@headlessui/react";
 import { Bars3Icon } from "@heroicons/react/20/solid";
 import { BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
@@ -7,9 +7,14 @@ import DropDownComponent from "../components/common/DropDownComponent";
 
 const navigation = [{ name: "Chat", href: "/chat" }];
 
+// 기본 메뉴 (비로그인)
 const menuItemsProfile = [
   { name: "로그인", to: "/login" },
   { name: "회원가입", to: "/signup" },
+];
+
+// +로그인 메뉴
+const menuItemsJWT = [
   {
     name: (
       <div className="absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"></div>
@@ -36,8 +41,10 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Example() {
+export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const loginState = useSelector((state) => state.loginSlice);
 
   const dropdownRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -83,11 +90,35 @@ export default function Example() {
             <div className="h-6 w-6">
               <button type="button" className="-m-2.5 p-2.5">
                 <span className="sr-only">View notifications</span>
-                <DropDownComponent
-                  onClick={handleClickMy}
-                  menuItems={menuItemsNotification}
-                  menuButtonImage="https://img.icons8.com/?size=100&id=eMfeVHKyTnkc&format=png&color=000000"
-                />
+                {menuItemsProfile.map((item, itemIdx) => (
+                  <Link key={itemIdx} to={item.to}>
+                    <DropDownComponent
+                      onClick={handleClickMy}
+                      menuItems={menuItemsProfile}
+                      menuButtonImage={
+                        item.menuButtonImage ||
+                        "https://img.icons8.com/?size=100&id=eMfeVHKyTnkc&format=png&color=000000"
+                      }
+                    />
+                  </Link>
+                ))}
+                Link> ))}
+                {loginState.email ? (
+                  menuItemsJWT.map((item, itemIdx) => (
+                    <Link key={itemIdx} to={item.href}>
+                      <DropDownComponent
+                        onClick={handleClickMy}
+                        menuItems={item}
+                        menuButtonImage={
+                          item.menuButtonImage ||
+                          "https://img.icons8.com/?size=100&id=eMfeVHKyTnkc&format=png&color=000000"
+                        }
+                      />
+                    </Link>
+                  ))
+                ) : (
+                  <></>
+                )}
                 {isOpen && (
                   <div ref={dropdownRef} onClick={handleCloseMy}></div>
                 )}
@@ -95,12 +126,23 @@ export default function Example() {
             </div>
             <div className="-m-1.5 p-1.5">
               <span className="sr-only">Your profile</span>
-              <div className=" h-8 w-8">
-                <DropDownComponent
-                  onClick={handleClickMy}
-                  menuItems={menuItemsProfile}
-                  menuButtonImage="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                />
+              <div className="h-8 w-8">
+                {loginState.email ? (
+                  menuItemsNotification.map((item, itemIdx) => (
+                    <Link key={itemIdx} to={item.href}>
+                      <DropDownComponent
+                        onClick={handleClickMy}
+                        menuItems={item}
+                        menuButtonImage={
+                          item.menuButtonImage ||
+                          "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                        }
+                      />
+                    </Link>
+                  ))
+                ) : (
+                  <></>
+                )}
                 {isOpen && (
                   <div ref={dropdownRef} onClick={handleCloseMy}></div>
                 )}

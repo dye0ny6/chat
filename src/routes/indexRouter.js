@@ -1,11 +1,11 @@
 import { useRoutes } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import LoadingPage from "../components/common/LoadingPage";
+import memberRouter from "./memberRouter";
 
 const Main = lazy(() => import("../pages/main/MainPage"));
 const Chat = lazy(() => import("../pages/ChatPage"));
-const Signup = lazy(() => import("../pages/member/SignupPage"));
-const Login = lazy(() => import("../pages/member/LoginPage"));
+const MemberIndex = lazy(() => import("../pages/member/MemberIndex"));
 
 const Router = () => {
   return useRoutes([
@@ -26,20 +26,13 @@ const Router = () => {
       ),
     },
     {
-      path: "signup",
+      path: "member",
       element: (
         <Suspense fallback={<LoadingPage />}>
-          <Signup />
+          <MemberIndex />
         </Suspense>
       ),
-    },
-    {
-      path: "login",
-      element: (
-        <Suspense fallback={<LoadingPage />}>
-          <Login />
-        </Suspense>
-      ),
+      children: memberRouter(),
     },
   ]);
 };
