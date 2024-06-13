@@ -1,10 +1,15 @@
 import BasicLayout from "../../layouts/BasicLayout";
-import React, { useRef, useState, useMemo, useCallback } from "react";
-import { memberSubmit, checkEmail } from "../../api/MemberApi";
+import React, {
+  useRef,
+  useState,
+  useMemo,
+  useCallback,
+  useEffect,
+} from "react";
+import { memberSubmit, checkEmail, checkNickname } from "../../api/MemberApi";
 import Select from "react-select";
 import countryList from "react-select-country-list";
 import { PhotoIcon } from "@heroicons/react/24/solid";
-import { ExclamationCircleIcon } from "@heroicons/react/20/solid";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -32,41 +37,44 @@ const SignupPage = () => {
   const options = useMemo(() => countryList().getData(), []);
   const [checkedValues, setCheckedValues] = useState([]); // 사용 언어 체크박스
 
-  // 실시간 비밀번호 유효성체크
+  // 비밀번호 유효성체크
   const [password, setPassword] = useState("");
   const [passwordMessage, setPasswordMessage] = useState("");
   const [isPassword, setIsPassword] = useState(false);
-  // 실시간 비밀번호 확인
+  // 비밀번호 확인
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [passwordConfirmMessage, setPasswordConfirmMessage] = useState("");
   const [isPasswordConfirm, setIsPasswordConfirm] = useState(false);
 
+  // 전화번호
+  const [inputValue, setInputValue] = useState("");
+
   // 이메일 중복 검사
   const handleClickEmail = async (e) => {
     e.preventDefault();
-    console.log("***** SignupPage - handleClickEmail");
-
-    const formData = new FormData();
-
-    formData.append("email", member.email);
+    console.log("***** SignupPage handleClickEmail");
+    console.log("***** SignupPage handleClickEmail - email : ", member.email);
 
     try {
       const response = await checkEmail(member.email);
-      if (response.duplicated) {
+      if (response) {
         alert("이미 사용 중인 이메일입니다.");
+        // TODO 사용 불가 처리
       } else {
         alert("사용 가능한 이메일입니다.");
-        // 이후 로직
       }
     } catch (error) {
       console.error("***** SignupPage handleClickEmail - error : ", error);
     }
   };
 
-  // 비밀번호
+  // 비밀번호 유효성체크
   const onChangePassword = useCallback((e) => {
-    member[e.target.name] = e.target.value;
-    setMember({ ...member });
+    const { name, value } = e.target;
+    setMember((prevMember) => ({
+      ...prevMember,
+      [name]: value,
+    }));
 
     const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[0-9]).{8,25}$/;
     const passwordCurrent = e.target.value;
@@ -83,8 +91,11 @@ const SignupPage = () => {
   // 비밀번호 확인
   const onChangePasswordConfirm = useCallback(
     (e) => {
-      member[e.target.name] = e.target.value;
-      setMember({ ...member });
+      const { name, value } = e.target;
+      setMember((prevMember) => ({
+        ...prevMember,
+        [name]: value,
+      }));
 
       const passwordConfirmCurrent = e.target.value;
       setPasswordConfirm(passwordConfirmCurrent);
@@ -100,9 +111,60 @@ const SignupPage = () => {
     [password]
   );
 
+  // 닉네임 중복 검사
+  const handleClickNickname = async (e) => {
+    e.preventDefault();
+    console.log("***** SignupPage handleClickNickname");
+    console.log(
+      "***** SignupPage handleClickNickname - nickname : ",
+      member.nickname
+    );
+
+    try {
+      const response = await checkNickname(member.nickname);
+      if (response) {
+        alert("이미 사용 중인 닉네임입니다.");
+        // TODO 사용 불가 처리
+      } else {
+        alert("사용 가능한 닉네임입니다.");
+      }
+    } catch (error) {
+      console.error("***** SignupPage handleClickNickname - error : ", error);
+    }
+  };
+
+  // 전화번호 정규식
+  useEffect(() => {
+    if (member.phone) {
+      setInputValue(formatPhoneNumber(member.phone));
+    } else {
+      setInputValue("");
+    }
+  }, [member.phone]);
+  const formatPhoneNumber = (phone) => {
+    if (phone.length === 10) {
+      return phone.replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3");
+    } else if (phone.length === 13) {
+      return phone
+        .replace(/-/g, "")
+        .replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3");
+    }
+    return phone;
+  };
+  const OnChangePhone = (e) => {
+    const regex = /^[0-9\b -]{0,13}$/;
+    if (regex.test(e.target.value)) {
+      setInputValue(e.target.value);
+      setMember({ ...member, phone: e.target.value });
+    }
+  };
+
   const handleChangeMember = (e) => {
-    member[e.target.name] = e.target.value;
-    setMember({ ...member });
+    const { name, value } = e.target;
+    setMember((prevMember) => ({
+      ...prevMember,
+      [name]: value,
+    }));
   };
 
   // 회원가입 요청
@@ -128,25 +190,28 @@ const SignupPage = () => {
 
       formData.append("email", member.email);
       formData.append("password", member.password);
-      // formData.append("passwordCheck", member.passwordCheck);
       formData.append("phone", member.phone);
       // formData.append("authNumber", member.authNumber);
       formData.append("nickname", member.nickname);
       formData.append("birth", member.birth);
       formData.append("gender", member.gender);
       formData.append("nationality", value);
-      //formData.append("languageList", JSON.stringify(checkedValues));
 
       console.log("***** SignupPage handleClickSubmit - formData : ", formData);
 
       const response = await memberSubmit(formData);
+
       console.log(
         "***** SignupPage handleClickSubmit - response(member_id) : ",
         response
       );
+      alert(`환영합니다, ${member.nickname}님`);
+      window.location.href = "/";
     } catch (error) {
       console.log("***** SignupPage handleClickSubmit - error : ", error);
       console.error(error);
+      alert("회원가입에 실패했습니다. 재시도 또는 관리자에게 문의해주세요.");
+      window.location.href = "/signup";
     }
   };
 
@@ -279,11 +344,11 @@ const SignupPage = () => {
                     </label>
                     <div className="mt-2 flex space-x-2">
                       <input
-                        type="tel"
+                        type="text"
                         name="phone"
                         id="phone"
-                        value={member.phone}
-                        onChange={handleChangeMember}
+                        value={inputValue}
+                        onChange={OnChangePhone}
                         placeholder="010-1234-5678"
                         className="flex-1 block border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                       />
@@ -295,6 +360,7 @@ const SignupPage = () => {
                       </button>
                     </div>
                     {/* 인증번호 확인 */}
+                    {/* TODO 전화번호 인증 API */}
                     {/* <div className="mt-2 flex space-x-2">
                       <input
                         type="number"
@@ -330,6 +396,7 @@ const SignupPage = () => {
                       />
                       <button
                         type="button"
+                        onClick={handleClickNickname}
                         className="inline-flex items-center px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                       >
                         <span>중복확인</span>

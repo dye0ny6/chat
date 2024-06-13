@@ -24,14 +24,25 @@ export const memberSubmit = async (member) => {
 };
 
 // 이메일 중복확인
+// JSON 형식으로 데이터 전송
 export const checkEmail = async (email) => {
   try {
-    const response = await axios.post(`${prefix}/checkEmail`, {
-      email,
-    });
+    const response = await axios.post(`${prefix}/checkEmail`, { email });
     return response.data;
   } catch (error) {
-    console.error("***** MemberApi checkEmail - Error: ", error);
+    console.error("***** MemberApi checkEmail - Error: ", error.message);
+    throw error;
+  }
+};
+
+// 닉네임 중복확인
+export const checkNickname = async (nickname) => {
+  try {
+    const response = await axios.post(`${prefix}/checkNickname`, {
+      nickname });
+    return response.data;
+  } catch (error) {
+    console.error("***** MemberApi checkNickname - Error: ", error);
     throw error;
   }
 };
