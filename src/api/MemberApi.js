@@ -23,6 +23,32 @@ export const memberSubmit = async (member) => {
   }
 };
 
+// 로그인 요청
+export const loginPost = async (loginParam) => {
+  console.log("***** MemberApi - loginPost 실행");
+  const header = {
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+  };
+
+  const form = new FormData();
+  form.append("username", loginParam.email);
+  form.append("password", loginParam.password);
+  console.log("***** MemberApi loginPost - form : ", form);
+  console.log(
+    "***** MemberApi loginPost - username(email) : ",
+    loginParam.email
+  );
+  console.log("***** MemberApi loginPost - password : ", loginParam.password);
+  try {
+    console.log("***** MemberApi loginPost /login 요청");
+    const response = await axios.post(`${API_SERVER_HOST}/login`, form, header);
+    return response.data;
+  } catch (error) {
+    console.error("***** MemberApi loginPost - Error: ", error);
+    throw error; // 예외 처리를 위해 다시 던짐
+  }
+};
+
 // 이메일 중복확인
 // JSON 형식으로 데이터 전송
 export const checkEmail = async (email) => {
@@ -39,7 +65,8 @@ export const checkEmail = async (email) => {
 export const checkNickname = async (nickname) => {
   try {
     const response = await axios.post(`${prefix}/checkNickname`, {
-      nickname });
+      nickname,
+    });
     return response.data;
   } catch (error) {
     console.error("***** MemberApi checkNickname - Error: ", error);

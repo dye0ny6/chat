@@ -1,33 +1,10 @@
-import React, { useState, useRef } from "react";
+import { useState, useRef } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
 import { Dialog, DialogPanel } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
-import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
 import DropDownComponent from "../components/common/DropDownComponent";
-
-const navigation = [{ name: "Chat", href: "/chat" }];
-
-const menuItemsProfile = [
-  { name: "로그인", to: "/login" },
-  { name: "회원가입", to: "/signup" },
-];
-
-const menuItemsJWT = [
-  { name: "프로필", to: "/profile" },
-  { name: "설정", to: "/setting" },
-  { name: "로그아웃", to: "/logout" },
-];
-
-const menuItemsNotification = [
-  { name: "알림1", to: "/" },
-  /*{
-    name: (
-      <div className="absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"></div>
-    ),
-    to: "/",
-  },*/
-  { name: "알림2", to: "/" },
-];
+import useCustomLogin from "../hooks/useCustomLogin";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -35,19 +12,55 @@ function classNames(...classes) {
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const loginState = useSelector((state) => state.loginSlice);
-  const dropdownRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
+
+  const dropdownRef = useRef(null);
+  const loginState = useSelector((state) => state.loginSlice);
+  const { execLogout, moveToPath } = useCustomLogin();
 
   const handleClickMy = () => {
     setIsOpen(!isOpen);
   };
-
   const handleCloseMy = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
       setIsOpen(false);
     }
   };
+
+  const handleClickLogout = () => {
+    execLogout();
+    // alert("로그아웃 되었습니다.");
+    moveToPath("/");
+  };
+
+  // 메뉴 (사실 이렇게 안 해도 됨)
+  const navigation = [{ name: "Chat", href: "/chat" }];
+  // 마이프로필 드롭다운 메뉴 - 비로그인
+  const menuItemsProfile = [
+    { name: "로그인", to: "/login" },
+    { name: "회원가입", to: "/signup" },
+  ];
+  // 마이프로필 드롭다운 메뉴 - 로그인
+  const menuItemsJWT = [
+    { name: "프로필", to: "/profile" },
+    { name: "설정", to: "/setting" },
+    {
+      name: "로그아웃",
+      // to: "/logout",
+      onClick: handleClickLogout,
+    },
+  ];
+  // 알림 드롭다운 메뉴
+  const menuItemsNotification = [
+    { name: "알림1", to: "/" },
+    /*{
+    name: (
+      <div className="absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"></div>
+    ),
+    to: "/",
+  },*/
+    { name: "알림2", to: "/" },
+  ];
 
   return (
     <>
