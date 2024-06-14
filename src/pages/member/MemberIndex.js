@@ -1,18 +1,10 @@
+import BasicLayout from "./../../layouts/BasicLayout";
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import BasicLayout from "./../../layouts/BasicLayout";
 import FindIdFWModal from "../../components/common/FindIdFWModal";
-import useCustomLogin from "../../hooks/useCustomLogin";
 
-const initState = {
-  email: "",
-  password: "",
-};
-
-const LoginPage = () => {
-  const [loginParam, setLoginParam] = useState({ ...initState });
+const MemberIndex = () => {
   const [isFindModalOpen, setIsFindModalOpen] = useState(false);
-  const { execLogin, moveToPath } = useCustomLogin();
 
   const openFindModal = () => {
     setIsFindModalOpen(true);
@@ -20,33 +12,6 @@ const LoginPage = () => {
 
   const closeFindModal = () => {
     setIsFindModalOpen(false);
-  };
-
-  const handleClickLogin = () => {
-    console.log("***** LoginPage - handleClickLogin");
-    console.log("***** LoginPage handleClickLogin - loginParam : ", loginParam);
-    execLogin(loginParam).then((data) => {
-      console.log("로그인 정보 : ", loginParam);
-      console.log("data", data);
-      if (data.error) {
-        alert("이메일 또는 비밀번호가 올바르지 않습니다.");
-      } else {
-        alert("로그인 성공!"); // TODO data 정보 보고 백틱 사용
-        moveToPath("/");
-      }
-    });
-  };
-
-  /*  const handleChange = (e) => {
-    loginParam[e.target.name] = e.target.value;
-    setLoginParam({ ...loginParam });
-  };*/
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setLoginParam((prevLoginParam) => ({
-      ...prevLoginParam,
-      [name]: value,
-    }));
   };
 
   return (
@@ -76,8 +41,6 @@ const LoginPage = () => {
                   type="email"
                   autoComplete="email"
                   required
-                  value={loginParam.email}
-                  onChange={handleChange}
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
@@ -99,8 +62,6 @@ const LoginPage = () => {
                   type="password"
                   autoComplete="current-password"
                   required
-                  value={loginParam.password}
-                  onChange={handleChange}
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
@@ -108,8 +69,7 @@ const LoginPage = () => {
 
             <div>
               <button
-                type="button"
-                onClick={handleClickLogin}
+                type="submit"
                 className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 로그인
@@ -143,4 +103,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default MemberIndex;

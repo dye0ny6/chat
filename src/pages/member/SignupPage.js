@@ -83,6 +83,7 @@ const SignupPage = () => {
     if (!passwordRegex.test(passwordCurrent)) {
       setPasswordMessage("영문자, 숫자를 포함해 8글자 이상 입력해주세요.");
       setIsPassword(false);
+      // TODO 사용 불가 처리
     } else {
       setPasswordMessage("사용 가능한 비밀번호입니다.");
       setIsPassword(true);
@@ -106,6 +107,7 @@ const SignupPage = () => {
       } else {
         setPasswordConfirmMessage("비밀번호가 일치하지 않습니다.");
         setIsPasswordConfirm(false);
+        // TODO 사용 불가 처리
       }
     },
     [password]
@@ -232,6 +234,7 @@ const SignupPage = () => {
 
   return (
     <BasicLayout>
+      {/* TODO required 처리 */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl">
           <form>

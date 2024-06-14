@@ -10,7 +10,7 @@ const refreshJWT = async (accessToken, refreshToken) => {
   const host = API_SERVER_HOST;
   const header = { headers: { Authorization: `Bearer ${accessToken}` } };
   const response = await axios.get(
-    `${host}/api/member/refresh?refreshToken=${refreshToken}`,
+    `${host}/refresh?refreshToken=${refreshToken}`,
     header
   );
   console.log("**************************");
@@ -50,24 +50,26 @@ const beforeRes = async (res) => {
   console.log("before return response....");
 
   console.log(res);
-  const data = res.data; // API 서버에서 보내준 응답 데이터
-  if (data && data.error === "ERROR_ACCESS_TOKEN") {
-    const memberCookie = getCookie("member");
-    const result = await refreshJWT(
-      memberCookie.accessToken,
-      memberCookie.refreshToken
-    );
-    console.log("refreshed token : ", result);
+  if (res.data) {
+    const data = res.data; // API 서버에서 보내준 응답 데이터
+    if (data.error === "ERROR_ACCESS_TOKEN") {
+      const memberCookie = getCookie("member");
+      const result = await refreshJWT(
+        memberCookie.accessToken,
+        memberCookie.refreshToken
+      );
+      console.log("refreshed token : ", result);
 
-    // 쿠키의 토큰 값 갱신
-    memberCookie.accessToken = result.accessToken;
-    memberCookie.refreshToken = result.refreshToken;
-    setCookie("member", JSON.stringify(memberCookie), 1);
+      // 쿠키의 토큰 값 갱신
+      memberCookie.accessToken = result.accessToken;
+      memberCookie.refreshToken = result.refreshToken;
+      setCookie("member", JSON.stringify(memberCookie), 1);
 
-    // 원래 처음 요청한 정보 꺼내서, Access, Refresh Token 갱신 뒤 재 요청
-    const originalRequest = res.config;
-    originalRequest.headers.Authorization = `Bearer ${result.accessToken}`;
-    return await axios(originalRequest);
+      // 원래 처음 요청한 정보 꺼내서, Access, Refresh Token 갱신 뒤 재 요청
+      const originalRequest = res.config;
+      originalRequest.headers.Authorization = `Bearer ${result.accessToken}`;
+      return await axios(originalRequest);
+    }
   }
 
   return res;
