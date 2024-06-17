@@ -20,7 +20,6 @@ const initState = {
   password: "",
   passwordConfirm: "",
   phone: "",
-  // authNumber: "",
   nickname: "",
   birth: "",
   gender: "",

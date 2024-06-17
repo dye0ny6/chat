@@ -73,3 +73,20 @@ export const checkNickname = async (nickname) => {
     throw error;
   }
 };
+
+// 회원 목록 조회 요청
+export const getList = async (pageParam) => {
+  console.log("***** MemberApi - getList 실행");
+  try {
+    const { page, size } = pageParam;
+    console.log("***** MemberApi getList - pageParam : ", pageParam);
+    const response = await axios.get(`${prefix}/list`, {
+      params: { page: page, size: size },
+    });
+    console.log("***** MemberApi getList - response.data : ", response.data);
+    return response.data; // PageResponseDTO {list, prev, next...}
+  } catch (error) {
+    console.error("***** MemberApi getList - Error: ", error);
+    throw error;
+  }
+};
