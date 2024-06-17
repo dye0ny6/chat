@@ -20,6 +20,7 @@ const initState = {
   password: "",
   passwordConfirm: "",
   phone: "",
+  // authNumber: "",
   nickname: "",
   birth: "",
   gender: "",
@@ -212,7 +213,7 @@ const SignupPage = () => {
       console.log("***** SignupPage handleClickSubmit - error : ", error);
       console.error(error);
       alert("회원가입에 실패했습니다. 재시도 또는 관리자에게 문의해주세요.");
-      window.location.href = "/signup";
+      // window.location.href = "/signup";
     }
   };
 

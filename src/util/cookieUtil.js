@@ -13,7 +13,12 @@ export const setCookie = (name, value, days) => {
 
 // 쿠키 조회
 export const getCookie = (name) => {
-  return cookies.get(name);
+  const cookieValue = cookies.get(name);
+  try {
+    return JSON.parse(cookieValue);
+  } catch (e) {
+    return cookieValue;
+  }
 };
 
 // 쿠키 삭제

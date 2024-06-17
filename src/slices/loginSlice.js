@@ -88,7 +88,10 @@ const loginSlice = createSlice({
             refreshToken: refreshToken,
           }; // 1일 동안 쿠키 저장
         } else {
-          console.log("***** loginSlice(createSlice) payload 에러", payload.error);
+          console.log(
+            "***** loginSlice(createSlice) payload 에러",
+            payload.error
+          );
         }
       })
       .addCase(loginPostAsync.pending, (state, action) => {
