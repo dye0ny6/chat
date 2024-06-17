@@ -20,15 +20,10 @@ export const getList = async () => {
   return response.data;
 };
 
-// 채팅방 조회
+// 메시지 목록 조회
 export const getRoom = async (roomId) => {
-  try {
-    const response = await axios.get(`${prefix}/room/${roomId}`);
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching room data:", error);
-    throw error;
-  }
+  const response = await jwtAxios.get(`${prefix}/room/${roomId}`);
+  return response.data;
 };
 
 // 채팅방 생성

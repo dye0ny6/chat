@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { useParams } from "react-router-dom";
 import { getRoom } from "../../api/chatApi";
 import { Stomp } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import useCustomLogin from "../../hooks/useCustomLogin";
-import { useParams } from "react-router-dom";
 
 const ChatRoomPage = () => {
   const { roomId } = useParams();
@@ -29,6 +29,7 @@ const ChatRoomPage = () => {
     stompClient.connect(
       { Authorization: `Bearer ${loginState.accessToken}` },
       () => {
+        console.log("Connected to server");
         stompClient.subscribe(`/sub/chat/room/${roomId}`, (message) => {
           handleNewMessage(JSON.parse(message.body));
         });
@@ -43,8 +44,9 @@ const ChatRoomPage = () => {
 
   const disconnect = useCallback(() => {
     if (stompClientRef.current) {
-      stompClientRef.current.disconnect();
-      console.log("Disconnected");
+      stompClientRef.current.disconnect(() => {
+        console.log("Disconnected");
+      });
     }
   }, []);
 
@@ -81,10 +83,16 @@ const ChatRoomPage = () => {
     getRoom(roomId)
       .then((data) => {
         console.log("Received messages from server:", data);
-        setMessages(data);
+        if (data) {
+          setMessages(data);
+        } else {
+          console.warn("No data received from the server");
+          setMessages([]); // 데이터가 없을 경우 빈 배열로 설정
+        }
       })
       .catch((error) => {
         console.error("Error fetching messages:", error);
+        setMessages([]); // 에러가 발생할 경우 빈 배열로 설정
       });
 
     connect();
@@ -107,7 +115,7 @@ const ChatRoomPage = () => {
       <div className="flex w-full flex-col gap-4">
         {messages.map((message, index) => (
           <div
-            key={message.id || index}
+            key={message.id || `msg-${index}`}
             className={`chat ${
               message.sender.email === loginState.email
                 ? "chat-end"
@@ -151,7 +159,7 @@ const ChatRoomPage = () => {
             </div>
             <button
               type="submit"
-              className="items-center flex px-3 py-2 bg-indigo-600 rounded-full shadow "
+              className="items-center flex px-3 py-2 bg-indigo-600 rounded-full shadow"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
