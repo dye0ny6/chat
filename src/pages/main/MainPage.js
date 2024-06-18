@@ -1,5 +1,5 @@
 import BasicLayout from "../../layouts/BasicLayout";
-import MainComponent from './../../components/main/MainComponent';
+import MainComponent from "../../components/main/MainComponent";
 
 const MainPage = () => {
   return (
