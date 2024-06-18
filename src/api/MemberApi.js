@@ -1,7 +1,7 @@
 import axios from "axios";
 // import jwtAxios from "./../util/jwtUtil";
 
-export const API_SERVER_HOST = "http://localhost:8080";
+export const API_SERVER_HOST = "http://192.168.100.36:8080";
 const prefix = `${API_SERVER_HOST}/api/member`;
 
 // 회원가입 요청

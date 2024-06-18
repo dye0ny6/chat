@@ -23,7 +23,7 @@ const ChatRoomPage = () => {
       return;
     }
 
-    const socket = new SockJS("http://localhost:8080/chat");
+    const socket = new SockJS("http://192.168.100.36:8080/chat");
     const stompClient = Stomp.over(socket);
 
     stompClient.connect(
