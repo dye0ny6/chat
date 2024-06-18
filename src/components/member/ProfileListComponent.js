@@ -36,6 +36,7 @@ const getLanguageLabels = (languageList, languageArray) => {
   return labels.filter((label) => label !== "").join(", ");
 };
 
+// 
 // TODO 멤버 프로필 조회 클릭이벤트
 
   return (
