@@ -1,4 +1,5 @@
 import axios from "axios";
+// import jwtAxios from "./../util/jwtUtil";
 
 export const API_SERVER_HOST = "http://localhost:8080";
 const prefix = `${API_SERVER_HOST}/api/member`;
@@ -79,3 +80,21 @@ export const getMembers = async () => {
   const response = await axios.get(`${prefix}/members`);
   return response.data;
 };
+
+// 메인 사용자 목록 조회
+export const getList = async (pageParam) => {
+  try {
+    const { page, size } = pageParam;
+    const response = await axios.get(`${prefix}/list`, {
+      params: { page, size },
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`, // localStorage에서 토큰을 가져오거나 다른 방법으로 획득해야 합니다.
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("***** MemberApi getList - Error: ", error);
+    throw error;
+  }
+};
+

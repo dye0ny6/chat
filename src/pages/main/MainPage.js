@@ -1,9 +1,10 @@
 import BasicLayout from "../../layouts/BasicLayout";
+import MainComponent from './../../components/main/MainComponent';
 
 const MainPage = () => {
   return (
     <BasicLayout>
-      <h3>Home</h3>
+      <MainComponent />
     </BasicLayout>
   );
 };
