@@ -23,6 +23,7 @@ export const getList = async () => {
 // 메시지 목록 조회
 export const getRoom = async (roomId) => {
   const response = await jwtAxios.get(`${prefix}/room/${roomId}`);
+  console.log(response.data);
   return response.data;
 };
 
