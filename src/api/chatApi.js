@@ -1,5 +1,5 @@
 // import jwtAxios from "../util/jwtUtil";
-import axios from "axios";
+// import axios from "axios";
 // import { getCookie } from "../util/cookieUtil";
 import { API_SERVER_HOST } from "./MemberApi";
 import jwtAxios from "../util/jwtUtil";
@@ -29,8 +29,6 @@ export const getRoom = async (roomId) => {
 
 // 채팅방 생성
 export const createChatRoom = async (memberId) => {
-  const response = await axios.post(`${prefix}/room`, {
-    memberId,
-  });
+  const response = await jwtAxios.post(`${prefix}/room/${memberId}`);
   return response.data;
 };
