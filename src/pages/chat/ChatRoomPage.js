@@ -23,7 +23,7 @@ const ChatRoomPage = () => {
       return;
     }
 
-    const socket = new SockJS("http://192.168.100.36:8080/chat");
+    const socket = new SockJS("http://localhost:8080/chat");
     const stompClient = Stomp.over(socket);
 
     stompClient.connect(
@@ -110,34 +110,34 @@ const ChatRoomPage = () => {
       setMessageInput("");
     }
   };
-  
-//   let timeValue = formatDate (messages.timestamp);
-  
-//   function formatDate (value) {
-//     const today = new Date();
-// 	        const timeValue = new Date(value);
-// 	        const betweenTime = Math.floor((today.getTime() - timeValue.getTime()) / 1000 / 60);
-	        
-// 	        if (betweenTime < 1) return '방금전';
-	        
-// 	        if (betweenTime < 60) {
-// 	            return `${betweenTime}분전`;
-// 	        }
-	
-// 	        const betweenTimeHour = Math.floor(betweenTime / 60);
-	        
-// 	        if (betweenTimeHour < 24) {
-// 	            return `${betweenTimeHour}시간전`;
-// 	        }
-	
-// 	        const betweenTimeDay = Math.floor(betweenTime / 60 / 24);
-	        
-// 	        if (betweenTimeDay < 365) {
-// 	            return `${betweenTimeDay}일전`;
-// 	        }
-	
-// 	        return `${Math.floor(betweenTimeDay / 365)}년전`;
-// }
+
+  //   let timeValue = formatDate (messages.timestamp);
+
+  //   function formatDate (value) {
+  //     const today = new Date();
+  // 	        const timeValue = new Date(value);
+  // 	        const betweenTime = Math.floor((today.getTime() - timeValue.getTime()) / 1000 / 60);
+
+  // 	        if (betweenTime < 1) return '방금전';
+
+  // 	        if (betweenTime < 60) {
+  // 	            return `${betweenTime}분전`;
+  // 	        }
+
+  // 	        const betweenTimeHour = Math.floor(betweenTime / 60);
+
+  // 	        if (betweenTimeHour < 24) {
+  // 	            return `${betweenTimeHour}시간전`;
+  // 	        }
+
+  // 	        const betweenTimeDay = Math.floor(betweenTime / 60 / 24);
+
+  // 	        if (betweenTimeDay < 365) {
+  // 	            return `${betweenTimeDay}일전`;
+  // 	        }
+
+  // 	        return `${Math.floor(betweenTimeDay / 365)}년전`;
+  // }
 
   return (
     <>
@@ -171,9 +171,7 @@ const ChatRoomPage = () => {
               </time>
             </div>
             <div className="chat-bubble">{message.content}</div>
-            <div className="chat-footer opacity-50">
-              {message.timestamp}
-            </div>
+            <div className="chat-footer opacity-50">{message.timestamp}</div>
           </div>
         ))}
       </div>

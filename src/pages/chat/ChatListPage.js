@@ -33,6 +33,8 @@ const ChatListPage = () => {
       });
   };
 
+// 로그인 유저가 멤버 목록에 안나오게 수정
+
   useEffect(() => {
     if (serverData.list.length === 0) {
       getMembers()
@@ -52,7 +54,8 @@ const ChatListPage = () => {
   const handleCreateChatRoom = (member) => {
     createChatRoom(member.id)
       .then((data) => {
-        fetchChatList();
+        // fetchChatList();
+        moveToRead(data.id)
       })
       .catch((error) => {
         console.error("Error creating chat room:", error);

@@ -29,8 +29,6 @@ export const getRoom = async (roomId) => {
 
 // 채팅방 생성
 export const createChatRoom = async (memberId) => {
-  const response = await axios.post(`${prefix}/room`, {
-    memberId,
-  });
+  const response = await jwtAxios.post(`${prefix}/room/${memberId}`);
   return response.data;
 };
